@@ -145,10 +145,13 @@ npx prisma db push
 ```bash
 node seed.js
 ```
-*(기본 계정 - 환자: patient1 / pw: 123 | 의사: doctor1 / pw: 123)*
+*(기본 계정 - 환자: patient1 / pw: 123 | 의사: doctor1 / pw: 123)* 
 
 **3. 로컬 서버 실행**
 ```bash
 npm run dev
 # 접속: http://localhost:3000
 ```
+ 
+ 
+

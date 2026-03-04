@@ -155,3 +155,4 @@ node seed.js
 npm run dev
 # 접속: http://localhost:3000
 ```
+ 

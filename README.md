@@ -29,34 +29,37 @@ Next.js와 Prisma를 기반으로 **고심해서 기획하고 구축한** 병원
 ### 1. 사용 사례 다이어그램 (Use Case Diagram)
 의사와 환자가 시스템 내에서 수행하는 핵심 액션(Authentication, Appointment scheduling)을 나타냅니다.
 
+### 1. 사용 사례 다이어그램 (Use Case Diagram)
+의사와 환자가 시스템 내에서 수행하는 핵심 액션(Authentication, Appointment scheduling)을 나타냅니다.
+
 ```mermaid
-usecaseDiagram
-    actor "환자 (Patient)" as P
-    actor "의사 (Doctor)" as D
-    
-    package "병원 예약 시스템 (Hospital System)" {
-        usecase "회원가입/로그인" as UC1
-        usecase "예약 가능 시간 조회" as UC2
-        usecase "진료 예약하기" as UC3
-        usecase "예약 취소하기" as UC4
-        usecase "자신의 예약 확인" as UC5
-        
-        usecase "진료 가능 일정 등록" as UC6
-        usecase "본인 스케줄 관리" as UC7
-    }
-    
-    P --> UC1
-    P --> UC2
-    P --> UC3
-    P --> UC4
-    P --> UC5
-    
-    D --> UC1
-    D --> UC6
-    D --> UC7
-    
-    UC3 ..> UC2 : <<include>>
+flowchart TD
+    subgraph "병원 예약 시스템 (Hospital System)"
+        UC1([회원가입/로그인])
+        UC2([예약 가능 시간 조회])
+        UC3([진료 예약하기])
+        UC4([예약 취소하기])
+        UC5([자신의 예약 확인])
+        UC6([진료 가능 일정 등록])
+        UC7([본인 스케줄 관리])
+    end
+
+    Patient((환자))
+    Doctor((의사))
+
+    Patient --> UC1
+    Patient --> UC2
+    Patient --> UC3
+    Patient --> UC4
+    Patient --> UC5
+
+    Doctor --> UC1
+    Doctor --> UC6
+    Doctor --> UC7
+
+    UC3 -.-> |include| UC2
 ```
+
 
 ### 2. 활동 다이어그램 (Activity Diagram)
 로그인부터 빈 시간 조회, 트랜잭션 예약 처리까지의 UX 논리 흐름도입니다.
@@ -152,6 +155,3 @@ node seed.js
 npm run dev
 # 접속: http://localhost:3000
 ```
- 
- 
-

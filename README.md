@@ -28,15 +28,107 @@ Next.js와 Prisma를 기반으로 **5일 동안 고심해서 기획하고 구축
 
 ### 1. 사용 사례 다이어그램 (Use Case Diagram)
 의사와 환자가 시스템 내에서 수행하는 핵심 액션(Authentication, Appointment scheduling)을 나타냅니다.
-> ![Use Case Diagram](./docs/use_case_diagram.png)
+
+```mermaid
+usecaseDiagram
+    actor "환자 (Patient)" as P
+    actor "의사 (Doctor)" as D
+    
+    package "병원 예약 시스템 (Hospital System)" {
+        usecase "회원가입/로그인" as UC1
+        usecase "예약 가능 시간 조회" as UC2
+        usecase "진료 예약하기" as UC3
+        usecase "예약 취소하기" as UC4
+        usecase "자신의 예약 확인" as UC5
+        
+        usecase "진료 가능 일정 등록" as UC6
+        usecase "본인 스케줄 관리" as UC7
+    }
+    
+    P --> UC1
+    P --> UC2
+    P --> UC3
+    P --> UC4
+    P --> UC5
+    
+    D --> UC1
+    D --> UC6
+    D --> UC7
+    
+    UC3 ..> UC2 : <<include>>
+```
 
 ### 2. 활동 다이어그램 (Activity Diagram)
 로그인부터 빈 시간 조회, 트랜잭션 예약 처리까지의 UX 논리 흐름도입니다.
-> ![Activity Diagram](./docs/activity_diagram.png)
+
+```mermaid
+stateDiagram-v2
+    [*] --> 로그인화면
+    로그인화면 --> 역할선택: 사용자 자격 증명
+    
+    state 역할선택 {
+        [*] --> 환자
+        [*] --> 의사
+    }
+    
+    환자 --> 예약화면: 리다이렉트
+    의사 --> 일정관리화면: 리다이렉트
+    
+    state 예약화면 {
+        빈시간조회 --> 시간선택
+        시간선택 --> 트랜잭션요청: 예약 버튼 클릭
+        트랜잭션요청 --> DB업데이트: (Schedule Lock & Reservation Insert)
+        DB업데이트 --> 완료: 성공
+        DB업데이트 --> 에러팝업: 이미 예약된 시간 (P2002)
+    }
+    
+    state 일정관리화면 {
+        날짜/시간입력 --> 등록요청
+        등록요청 --> DB저장: Schedule Insert
+        DB저장 --> 리스트갱신
+        DB저장 --> 중복에러: 동일시간 존재
+    }
+    
+    완료 --> [*]
+    리스트갱신 --> [*]
+```
 
 ### 3. 클래스 다이어그램 (Class Diagram)
 `User`, `Schedule`, `Reservation` 개체 간의 연관 관계(1:N, 1:1)와 속성, 그리고 Prisma DB 모델링의 근간이 된 구조입니다.
-> ![Class Diagram](./docs/class_diagram.png)
+
+```mermaid
+classDiagram
+    class User {
+        +Int id (PK)
+        +String username (Unique)
+        +String name
+        +String role ("환자" or "의사")
+        +String password
+        +login()
+    }
+    
+    class Schedule {
+        +Int id (PK)
+        +Int doctorId (FK)
+        +Date availableDate
+        +String availableTime
+        +Boolean isBooked
+        +createSchedule()
+    }
+    
+    class Reservation {
+        +Int id (PK)
+        +Int patientId (FK)
+        +Int scheduleId (FK, Unique)
+        +String status ("예약완료", "취소")
+        +createReservation()
+        +cancel()
+    }
+    
+    User "1" -- "0..*" Schedule : 의사(Doctor)가 등록
+    User "1" -- "0..*" Reservation : 환자(Patient)가 예약
+    Schedule "1" -- "0..1" Reservation : 해당 시간에 배정
+```
 
 ---
 

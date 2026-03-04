@@ -29,9 +29,6 @@ Next.js와 Prisma를 기반으로 **고심해서 기획하고 구축한** 병원
 ### 1. 사용 사례 다이어그램 (Use Case Diagram)
 의사와 환자가 시스템 내에서 수행하는 핵심 액션(Authentication, Appointment scheduling)을 나타냅니다.
 
-### 1. 사용 사례 다이어그램 (Use Case Diagram)
-의사와 환자가 시스템 내에서 수행하는 핵심 액션(Authentication, Appointment scheduling)을 나타냅니다.
-
 ```mermaid
 flowchart TD
     subgraph "병원 예약 시스템 (Hospital System)"
